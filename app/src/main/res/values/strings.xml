@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">MyStock</string>
+    <string name="nome">Nome do Produto</string>
+    <string name="quantidade">Quantidade</string>
+    <string name="limparButton">Limpar</string>
+    <string name="cadastrarButton">Cadastrar</string>
+    <string name="telaCadastro">Tela de cadastro de Produto</string>
+    <string name="quantidadeLabel">Quantidade do Produto</string>
+    <string name="nomeLabel">Nome do produto</string>
+    <string name="dados_limpos">Dados limpos!</string>
+    <string name="checkBoxImportante">Importante</string>
+    <string name="radioButtonComida">Comida</string>
+    <string name="radioButtonLimpeza">Limpeza</string>
+    <string name="radioButtonHigiene">Higiene</string>
+    <string name="textViewCategoria">Escolha a Categoria</string>
+</resources>
