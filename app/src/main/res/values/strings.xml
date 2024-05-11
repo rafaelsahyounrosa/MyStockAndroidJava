@@ -13,4 +13,13 @@
     <string name="radioButtonLimpeza">Limpeza</string>
     <string name="radioButtonHigiene">Higiene</string>
     <string name="textViewCategoria">Escolha a Categoria</string>
+    <string name="criticidadeLabel">Criticidade</string>
+    <string name="baixa">Baixa</string>
+    <string name="media">Média</string>
+    <string name="alta">Alta</string>
+    <string name="preciso_preencher_o_campo_nome_para_cadastrar">É preciso preencher o campo nome para cadastrar</string>
+    <string name="preciso_preecher_o_campo_de_quantidade_para_cadastrar">É preciso preecher o campo de quantidade para cadastrar</string>
+    <string name="preciso_escolher_a_categoria_para_cadastrar">É preciso escolher a categoria para cadastrar</string>
+    <string name="checkbox_importante_marcado_erro">O checkbox de importante foi marcado, logo é preciso ter uma criticidade válida.</string>
+    <string name="dados_selecionados">"Dados selecionados: "</string>
 </resources>

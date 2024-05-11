@@ -78,6 +78,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="24dp"
+                android:onClick="validaDados"
                 android:text="@string/cadastrarButton"
                 app:layout_constraintStart_toStartOf="@+id/editTextNome"
                 app:layout_constraintTop_toBottomOf="@+id/radioGroupCategoria" />
@@ -123,8 +124,25 @@
                 android:id="@+id/textViewCategoria"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:text="@string/textViewCategoria"
+                app:layout_constraintStart_toStartOf="@+id/checkBoxImportante"
+                app:layout_constraintTop_toBottomOf="@+id/spinnerCriticidade" />
+
+            <Spinner
+                android:id="@+id/spinnerCriticidade"
+                android:layout_width="361dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="@+id/criticidadeLabel"
+                app:layout_constraintTop_toBottomOf="@+id/criticidadeLabel" />
+
+            <TextView
+                android:id="@+id/criticidadeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/criticidadeLabel"
                 app:layout_constraintStart_toStartOf="@+id/checkBoxImportante"
                 app:layout_constraintTop_toBottomOf="@+id/checkBoxImportante" />
 
