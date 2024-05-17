@@ -7,12 +7,15 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class ProdutoAdapter extends BaseAdapter {
 
     private Context context;
     private List<Produto> produtos;
+    private NumberFormat numberFormat;
 
     private static class ProdutoHolder{
         public TextView textViewValorNome;
@@ -25,6 +28,7 @@ public class ProdutoAdapter extends BaseAdapter {
     public ProdutoAdapter(Context context, List<Produto> produtos) {
         this.context = context;
         this.produtos = produtos;
+        numberFormat = NumberFormat.getNumberInstance(new Locale("pt", "BR"));
     }
 
     @Override
@@ -65,7 +69,17 @@ public class ProdutoAdapter extends BaseAdapter {
         }
 
         holder.textViewValorNome.setText(produtos.get(i).getNome());
-        holder.textViewValorQuantidade.setText(produtos.get(i).getQuantidade());
+
+/*
+ TODO perguntar se há alguma vantagem em usar o number format quando formos usar a internacionalização
+ visto que são números puros e não moeda ou unidades de medida.
+        String quantidadeFormatada = numberFormat.format(produtos.get(i).getQuantidade());
+        holder.textViewValorQuantidade.setText(quantidadeFormatada);
+*/
+        holder.textViewValorQuantidade.setText(String.valueOf(produtos.get(i).getQuantidade()));
+
+
+
         if(produtos.get(i).isImportante()){
             holder.textViewValorImportante.setText(context.getResources().getString(R.string.sim));
         }else {
