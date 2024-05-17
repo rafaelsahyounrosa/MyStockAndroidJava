@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MyStock</string>
-    <string name="nome">Nome do Produto</string>
-    <string name="quantidade">Quantidade</string>
+    <string name="nome">Nome do Produto:</string>
+    <string name="quantidade">Quantidade:</string>
     <string name="limparButton">Limpar</string>
     <string name="cadastrarButton">Cadastrar</string>
     <string name="telaCadastro">Tela de cadastro de Produto</string>
@@ -13,7 +13,7 @@
     <string name="radioButtonLimpeza">Limpeza</string>
     <string name="radioButtonHigiene">Higiene</string>
     <string name="textViewCategoria">Escolha a Categoria</string>
-    <string name="criticidadeLabel">Criticidade</string>
+    <string name="criticidadeLabel">Criticidade:</string>
     <string name="baixa">Baixa</string>
     <string name="media">Média</string>
     <string name="alta">Alta</string>
@@ -22,4 +22,11 @@
     <string name="preciso_escolher_a_categoria_para_cadastrar">É preciso escolher a categoria para cadastrar</string>
     <string name="checkbox_importante_marcado_erro">O checkbox de importante foi marcado, logo é preciso ter uma criticidade válida.</string>
     <string name="dados_selecionados">"Dados selecionados: "</string>
+    <string name="textViewCategoriaTelaLista">Categoria:</string>
+    <string name="sim">Sim</string>
+    <string name="nao">Não</string>
+    <string name="comida">Comida</string>
+    <string name="limpeza">Limpeza</string>
+    <string name="higiene">Higiene</string>
+    <string name="semCriticidade">Sem Criticidade</string>
 </resources>
