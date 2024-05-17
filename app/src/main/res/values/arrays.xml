@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="nomes">
+        <item>@string/aguaSanitaria</item>
+        <item>@string/pastaDeDente</item>
+        <item>@string/arroz</item>
+        <item>@string/detergente</item>
+        <item>@string/sabonete</item>
+        <item>@string/shampoo</item>
+        <item>@string/macarrao</item>
+        <item>@string/bombril</item>
+        <item>@string/feijao</item>
+        <item>@string/carne</item>
+
+    </string-array>
+
+    <integer-array name="quantidades">
+        <item>1</item>
+        <item>2</item>
+        <item>9</item>
+        <item>4</item>
+        <item>10</item>
+        <item>7</item>
+        <item>19</item>
+        <item>12</item>
+        <item>31</item>
+        <item>1</item>
+    </integer-array>
+
+    <integer-array name="importantes">
+        <item>1</item>
+        <item>1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+    </integer-array>
+
+    <integer-array name="criticidades">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>3</item>
+        <item>3</item>
+        <item>0</item>
+        <item>0</item>
+    </integer-array>
+
+    <integer-array name="categorias">
+        <item>1</item>
+        <item>2</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>2</item>
+        <item>0</item>
+        <item>1</item>
+        <item>0</item>
+        <item>0</item>
+    </integer-array>
+</resources>

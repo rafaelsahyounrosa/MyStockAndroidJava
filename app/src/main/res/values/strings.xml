@@ -29,4 +29,19 @@
     <string name="limpeza">Limpeza</string>
     <string name="higiene">Higiene</string>
     <string name="semCriticidade">Sem Criticidade</string>
+
+    <string name="aguaSanitaria">Agua Sanitaria</string>
+    <string name="pastaDeDente">Pasta de Dente</string>
+    <string name="arroz">Arroz</string>
+    <string name="detergente">Detergente</string>
+    <string name="sabonete">Sabonete</string>
+    <string name="shampoo">Shampoo</string>
+    <string name="macarrao">Macarrão</string>
+    <string name="bombril">Bombril</string>
+    <string name="feijao">Feijão</string>
+    <string name="carne">Carne</string>
+    <string name="item_de_nome">O item de nome \"</string>
+    <string name="foi_clicado">\"\nfoi clicado.</string>
+
+
 </resources>
