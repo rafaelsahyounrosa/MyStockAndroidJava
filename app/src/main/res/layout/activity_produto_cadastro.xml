@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".MainActivity">
+    tools:context=".ProdutoCadastroActivity">
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -60,7 +60,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/buttonLimpar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -68,17 +68,17 @@
                 android:layout_marginTop="24dp"
                 android:onClick="limparDados"
                 android:text="@string/limparButton"
-                app:layout_constraintStart_toEndOf="@+id/button2"
+                app:layout_constraintStart_toEndOf="@+id/buttonCadastrar"
                 app:layout_constraintTop_toBottomOf="@+id/radioGroupCategoria" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/buttonCadastrar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="24dp"
-                android:onClick="validaDados"
+                android:onClick="salvar"
                 android:text="@string/cadastrarButton"
                 app:layout_constraintStart_toStartOf="@+id/editTextNome"
                 app:layout_constraintTop_toBottomOf="@+id/radioGroupCategoria" />
@@ -145,6 +145,18 @@
                 android:text="@string/criticidadeLabel"
                 app:layout_constraintStart_toStartOf="@+id/checkBoxImportante"
                 app:layout_constraintTop_toBottomOf="@+id/checkBoxImportante" />
+
+            <Button
+                android:id="@+id/buttonCancelar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="24dp"
+                android:onClick="cancelar"
+                android:text="@string/cancelar"
+                app:layout_constraintStart_toEndOf="@+id/buttonLimpar"
+                app:layout_constraintTop_toBottomOf="@+id/radioGroupCategoria" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -42,6 +42,15 @@
     <string name="carne">Carne</string>
     <string name="item_de_nome">O item de nome \"</string>
     <string name="foi_clicado">\"\nfoi clicado.</string>
+    <string name="adicionar">Adicionar</string>
+    <string name="sore">Sobre</string>
+    <string name="appDescricao">Descrição: App criado para gerenciar o estoque da sua casa</string>
+    <string name="autor">Autor: Rafael Sahyoun Rosa</string>
+    <string name="cursoAutor">Curso: Especialização em Tecnologia Java</string>
+    <string name="emailAutor">Email: rafaelsahyoun@gmail.com</string>
+    <string name="linkedinAutor">https://www.linkedin.com/in/rafael-sahyoun/</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="n_o_foi_poss_vel_abrir_o_site">Não foi possível abrir o site</string>
 
 
 </resources>

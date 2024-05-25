@@ -15,7 +15,12 @@ public class Produto {
         this.nome = nome;
         this.quantidade = quantidade;
         this.importante = importante;
-        this.criticidade = criticidade;
+        if (importante){
+            this.criticidade = criticidade;
+        } else {
+            this.criticidade = Criticidade.Nenhuma;
+        }
+
         this.categoria = categoria;
     }
 

@@ -73,7 +73,7 @@
 
     <TextView
         android:id="@+id/textViewValorCriticidade"
-        android:layout_width="80dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="@+id/textViewValorCategoria"
@@ -92,7 +92,7 @@
 
     <TextView
         android:id="@+id/textViewValorCategoria"
-        android:layout_width="80dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"

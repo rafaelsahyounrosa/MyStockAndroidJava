@@ -1,34 +1,52 @@
 package com.example.mystock;
 
 import static com.example.mystock.R.string.dados_limpos;
+import static com.example.mystock.R.string.nome;
+import static com.example.mystock.R.string.quantidade;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class ProdutoCadastroActivity extends AppCompatActivity {
+
+    public static final String NOME = "NOME";
+    public static final String QUANTIDADE = "QUANTIDADE";
+    public static final String IMPORTANTE = "IMPORTANTE";
+    public static final String CRITICIDADE = "CRITICIDADE";
+    public static final String CATEGORIA = "CATEGORIA";
 
     private EditText editTextNome, editTextQuantidade;
     private CheckBox checkBoxImportante;
     private RadioGroup radioGroupCategoria;
     private Spinner spinnerCriticidade;
 
+    public static void novoProduto(AppCompatActivity activity, ActivityResultLauncher<Intent> launcher){
+        Intent intent = new Intent(activity, ProdutoCadastroActivity.class);
+
+        launcher.launch(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_produto_cadastro);
 
         editTextNome = findViewById(R.id.editTextNome);
         editTextQuantidade = findViewById(R.id.editTextQuantidade);
@@ -76,32 +94,64 @@ public class MainActivity extends AppCompatActivity {
         spinnerCriticidade.setAdapter(adapter);
     }
 
-    public void validaDados(View view){
+    public void salvar(View view){
 
         String nome = editTextNome.getText().toString();
         String quantidade = editTextQuantidade.getText().toString();
         Boolean importante = checkBoxImportante.isChecked();
         String criticidade = spinnerCriticidade.getSelectedItem().toString();
+
+        //TODO Teste para recuperar o texto que está no radioGroup
         int categoria = radioGroupCategoria.getCheckedRadioButtonId();
+        String categoriaString = ((RadioButton) findViewById(categoria)).getText().toString();
+
+//        validaDados(view, nome, quantidade, importante, criticidade, categoria);
+        int dadosCorretos = validaDados(view, nome, quantidade, importante, criticidade, categoria);
+
+        if (dadosCorretos == 1){
+
+            Intent intent = new Intent();
+
+            intent.putExtra(NOME, nome);
+            intent.putExtra(QUANTIDADE, quantidade);
+            intent.putExtra(IMPORTANTE, importante);
+            intent.putExtra(CRITICIDADE, criticidade);
+            intent.putExtra(CATEGORIA, categoriaString);
+
+            setResult(Activity.RESULT_OK, intent);
+            finish();
+        }
+
+        return;
+
+    }
+
+    public int validaDados(View view, String nome, String quantidade, Boolean importante, String criticidade, int categoria){
+
+//        String nome = editTextNome.getText().toString();
+//        String quantidade = editTextQuantidade.getText().toString();
+//        Boolean importante = checkBoxImportante.isChecked();
+//        String criticidade = spinnerCriticidade.getSelectedItem().toString();
+//        int categoria = radioGroupCategoria.getCheckedRadioButtonId();
 
         if(nome == null || nome.trim().isEmpty()){
             Toast.makeText(this,
                     getString(R.string.preciso_preencher_o_campo_nome_para_cadastrar),
                     Toast.LENGTH_LONG).show();
             editTextNome.requestFocus();
-            return;
+            return 0;
         } else if (quantidade == null || quantidade.trim().isEmpty()) {
             Toast.makeText(this,
                     getString(R.string.preciso_preecher_o_campo_de_quantidade_para_cadastrar),
                     Toast.LENGTH_LONG).show();
             editTextQuantidade.requestFocus();
-            return;
+            return 0;
         } else if (categoria < 0) {
             Toast.makeText(this,
                     getString(R.string.preciso_escolher_a_categoria_para_cadastrar),
                     Toast.LENGTH_LONG).show();
             radioGroupCategoria.requestFocus();
-            return;
+            return 0;
 
         } else if (importante) {
             //Lógica pois o checkbox será opcional
@@ -109,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this,
                         R.string.checkbox_importante_marcado_erro,
                         Toast.LENGTH_LONG).show();
-                return;
+                return 0;
             }
         }
 
@@ -122,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                         "\n" + getString(R.string.textViewCategoria) + " " + categoria
                 ,
                 Toast.LENGTH_LONG).show();
-
+        return 1;
     }
 
     public void limparDados (View view){
@@ -137,4 +187,10 @@ public class MainActivity extends AppCompatActivity {
         editTextNome.requestFocus();
         Toast.makeText(this, dados_limpos, Toast.LENGTH_LONG).show();
     }
+
+    public void cancelar(View view){
+        setResult(ProdutoCadastroActivity.RESULT_CANCELED);
+        finish();
+    }
+
 }
