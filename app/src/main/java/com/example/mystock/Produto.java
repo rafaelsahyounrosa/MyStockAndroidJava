@@ -1,12 +1,28 @@
 package com.example.mystock;
 
-public class Produto {
+import java.util.Comparator;
+
+public class Produto /*implements Comparable*/{
+
+    public static Comparator<Produto> comparatorApiUnder24 = new Comparator<Produto>() {
+        @Override
+        public int compare(Produto p1, Produto p2) {
+            int categoryComparator = p1.getCategoria().compareTo(p2.getCategoria());
+            if (categoryComparator != 0) {
+                return categoryComparator;
+            }
+
+            return p1.getNome().compareTo(p2.getNome());
+        }
+    };
 
     private String nome;
     private int quantidade;
     private boolean importante;
     private Criticidade criticidade;
     private Categoria categoria;
+
+
 
     public Produto() {
     }
@@ -49,11 +65,15 @@ public class Produto {
     }
 
     public Criticidade getCriticidade() {
-        return criticidade;
+        return importante ? criticidade : Criticidade.Nenhuma;
     }
 
     public void setCriticidade(Criticidade criticidade) {
-        this.criticidade = criticidade;
+        if (importante){
+            this.criticidade = criticidade;
+        } else {
+            this.criticidade = Criticidade.Nenhuma;
+        }
     }
 
     public Categoria getCategoria() {
@@ -74,4 +94,12 @@ public class Produto {
                 ", categoria=" + categoria +
                 '}';
     }
+
+
+//    @Override
+//    public int compareTo(Produto p) {
+//        return Comparator.comparing(Produto::getCategoria)
+//                .thenComparing(Produto::getNome)
+//                .compare(this, p);
+//    }
 }

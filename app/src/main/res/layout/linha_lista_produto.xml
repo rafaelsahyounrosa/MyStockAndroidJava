@@ -20,6 +20,8 @@
         android:id="@+id/textViewValorNome"
         android:layout_width="268dp"
         android:layout_height="19dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textViewNome"
         app:layout_constraintTop_toTopOf="@+id/textViewNome" />

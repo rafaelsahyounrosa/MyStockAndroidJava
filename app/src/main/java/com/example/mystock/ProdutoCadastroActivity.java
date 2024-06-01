@@ -1,12 +1,15 @@
 package com.example.mystock;
 
 import static com.example.mystock.R.string.dados_limpos;
+import static com.example.mystock.R.string.media;
 import static com.example.mystock.R.string.nome;
 import static com.example.mystock.R.string.quantidade;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -19,6 +22,8 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -31,6 +36,16 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
     public static final String CRITICIDADE = "CRITICIDADE";
     public static final String CATEGORIA = "CATEGORIA";
 
+    public static final String MODO = "MODO";
+    public static final int NOVO = 1;
+    public static final int EDITAR = 2;
+    private int modo;
+    private String nomeOriginal;
+    private int quantidadeOriginal;
+    private boolean importanteOriginal;
+    private Criticidade criticidadeOriginal;
+    private Categoria categoriaOriginal;
+
     private EditText editTextNome, editTextQuantidade;
     private CheckBox checkBoxImportante;
     private RadioGroup radioGroupCategoria;
@@ -39,14 +54,34 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
     public static void novoProduto(AppCompatActivity activity, ActivityResultLauncher<Intent> launcher){
         Intent intent = new Intent(activity, ProdutoCadastroActivity.class);
 
+        intent.putExtra(MODO, NOVO);
+
         launcher.launch(intent);
     }
+    public static void editarProduto(AppCompatActivity activity, ActivityResultLauncher<Intent> launcher, Produto produto){
+        Intent intent = new Intent(activity, ProdutoCadastroActivity.class);
+
+        intent.putExtra(MODO, EDITAR);
+        intent.putExtra(NOME, produto.getNome());
+        intent.putExtra(QUANTIDADE, produto.getQuantidade());
+        intent.putExtra(IMPORTANTE, produto.isImportante());
+        intent.putExtra(CRITICIDADE, produto.getCriticidade().name());
+        intent.putExtra(CATEGORIA, produto.getCategoria().name());
+
+        launcher.launch(intent);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_produto_cadastro);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         editTextNome = findViewById(R.id.editTextNome);
         editTextQuantidade = findViewById(R.id.editTextQuantidade);
@@ -64,6 +99,54 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
             }
         });
 
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+
+        if (bundle != null){
+            modo = bundle.getInt(MODO, NOVO);
+
+            if (modo == NOVO){
+                setTitle(getString(R.string.novo_produto));
+
+            } else if (modo == EDITAR) {
+                setTitle(getString(R.string.editar_produto));
+
+                nomeOriginal = bundle.getString(NOME);
+                quantidadeOriginal = bundle.getInt(QUANTIDADE);
+                importanteOriginal = bundle.getBoolean(IMPORTANTE);
+                criticidadeOriginal = Criticidade.valueOf(bundle.getString(CRITICIDADE));
+                categoriaOriginal = Categoria.valueOf(bundle.getString(CATEGORIA));
+
+                editTextNome.setText(nomeOriginal);
+                editTextQuantidade.setText(String.valueOf(quantidadeOriginal));
+                checkBoxImportante.setChecked(importanteOriginal);
+                //TODO Melhorar tratamento para setar criticidade quando não for importante (marcar qualquer uma?)
+                if (criticidadeOriginal == Criticidade.Nenhuma){
+                    spinnerCriticidade.setSelection(0);
+                }else {
+                    spinnerCriticidade.setSelection(criticidadeOriginal.ordinal());
+
+                }
+
+                //TODO Melhorar tratamento para recuperar o radioID
+                //radioGroupCategoria.check(categoriaOriginal.ordinal());
+                if (categoriaOriginal == Categoria.Comida){
+                    radioGroupCategoria.check(R.id.radioButtonComida);
+                } else if (categoriaOriginal == Categoria.Limpeza) {
+                    radioGroupCategoria.check(R.id.radioButtonLimpeza);
+                }else {
+                    radioGroupCategoria.check(R.id.radioButtonHigiene);
+                }
+
+
+                //editTextNome.setSelection(editTextNome.getText().length());
+                if (editTextNome.getText() != null && editTextNome.getText().length() > 0) {
+                    editTextNome.setSelection(editTextNome.getText().length());
+                }
+
+            }
+        }
+
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
 //            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 //            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -80,6 +163,7 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
 //        return null;
 //    }
 
+
     private void popularSpinner(){
         ArrayList<String> listaCriticidade = new ArrayList<>();
 
@@ -94,7 +178,7 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
         spinnerCriticidade.setAdapter(adapter);
     }
 
-    public void salvar(View view){
+    public void salvar(){
 
         String nome = editTextNome.getText().toString();
         String quantidade = editTextQuantidade.getText().toString();
@@ -103,12 +187,14 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
 
         //TODO Teste para recuperar o texto que está no radioGroup
         int categoria = radioGroupCategoria.getCheckedRadioButtonId();
-        String categoriaString = ((RadioButton) findViewById(categoria)).getText().toString();
+
 
 //        validaDados(view, nome, quantidade, importante, criticidade, categoria);
-        int dadosCorretos = validaDados(view, nome, quantidade, importante, criticidade, categoria);
+        int dadosCorretos = validaDados(nome, quantidade, importante, criticidade, categoria);
 
         if (dadosCorretos == 1){
+
+            String categoriaString = ((RadioButton) findViewById(categoria)).getText().toString();
 
             Intent intent = new Intent();
 
@@ -122,11 +208,9 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
             finish();
         }
 
-        return;
-
     }
 
-    public int validaDados(View view, String nome, String quantidade, Boolean importante, String criticidade, int categoria){
+    public int validaDados(String nome, String quantidade, Boolean importante, String criticidade, int categoria){
 
 //        String nome = editTextNome.getText().toString();
 //        String quantidade = editTextQuantidade.getText().toString();
@@ -146,7 +230,7 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG).show();
             editTextQuantidade.requestFocus();
             return 0;
-        } else if (categoria < 0) {
+        } else if (/*categoria = null ||*/ categoria < 0) {
             Toast.makeText(this,
                     getString(R.string.preciso_escolher_a_categoria_para_cadastrar),
                     Toast.LENGTH_LONG).show();
@@ -175,7 +259,7 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
         return 1;
     }
 
-    public void limparDados (View view){
+    public void limparDados (){
         editTextNome.setText(null);
         editTextQuantidade.setText(null);
         checkBoxImportante.setChecked(false);
@@ -188,9 +272,34 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
         Toast.makeText(this, dados_limpos, Toast.LENGTH_LONG).show();
     }
 
-    public void cancelar(View view){
+    public void cancelar(){
         setResult(ProdutoCadastroActivity.RESULT_CANCELED);
         finish();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.produto_opcoes, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        int idMenuItem = item.getItemId();
+
+        if (idMenuItem == R.id.menuItemSalvar){
+            salvar();
+            return true;
+        } else if (idMenuItem == R.id.menuItemLimpar) {
+            limparDados();
+            return true;
+        } else if (idMenuItem == android.R.id.home) {
+            cancelar();
+            return true;
+        }
+        else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
 }
