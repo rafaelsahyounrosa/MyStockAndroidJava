@@ -3,7 +3,9 @@ package com.example.mystock;
 import static com.example.mystock.R.string.dados_limpos;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +35,10 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
     public static final String CRITICIDADE_CODIGO = "CRITICIDADE_CODIGO";
     public static final String CATEGORIA = "CATEGORIA";
     public static final String CATEGORIA_CODIGO = "CATEGORIA_CODIGO";
+    public static final String SUGERIR_PREENCHIMENTO = "SUGERIR_PREENCHIMENTO";
+    public static final String ULTIMA_CATEGORIA = "ULTIMA_CATEGORIA";
+    private boolean sugerirPreenchimento = false;
+    private int ultimaCategoria = 0;
 
     public static final String MODO = "MODO";
     public static final int NOVO = 1;
@@ -77,6 +83,9 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
         setContentView(R.layout.activity_produto_cadastro);
 
         ActionBar actionBar = getSupportActionBar();
+        lerSugerirPreenchimento();
+        lerUltimaCategoria();
+
         if (actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -105,6 +114,11 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
 
             if (modo == NOVO){
                 setTitle(getString(R.string.novo_produto));
+
+                if(sugerirPreenchimento){
+
+                    radioGroupCategoria.check(ultimaCategoria);
+                }
 
             } else if (modo == EDITAR) {
                 setTitle(getString(R.string.editar_produto));
@@ -192,6 +206,8 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
         int dadosCorretos = validaDados(nome, quantidade, importante, criticidade, categoria);
 
         if (dadosCorretos == 1){
+
+            salvarUltimaCategoria(categoria);
 
             String categoriaString = ((RadioButton) findViewById(categoria)).getText().toString();
 
@@ -286,6 +302,15 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        MenuItem item = menu.findItem(R.id.sugerirCampos);
+        item.setChecked(sugerirPreenchimento);
+
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int idMenuItem = item.getItemId();
@@ -296,6 +321,18 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
         } else if (idMenuItem == R.id.menuItemLimpar) {
             limparDados();
             return true;
+
+        } else if (idMenuItem == R.id.sugerirCampos) {
+            boolean valor = !item.isChecked();
+            salvarSugerirPreenchimento(valor);
+            item.setChecked(valor);
+
+            if (sugerirPreenchimento){
+                radioGroupCategoria.check(ultimaCategoria);
+            }
+
+            return true;
+
         } else if (idMenuItem == android.R.id.home) {
             cancelar();
             return true;
@@ -303,5 +340,45 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
         else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void lerSugerirPreenchimento(){
+
+        SharedPreferences shared = getSharedPreferences(ListagemActivity.ARQUIVO, Context.MODE_PRIVATE);
+
+        sugerirPreenchimento = shared.getBoolean(SUGERIR_PREENCHIMENTO, sugerirPreenchimento);
+    }
+
+    private void salvarSugerirPreenchimento(boolean novoValor){
+
+        SharedPreferences shared = getSharedPreferences(ListagemActivity.ARQUIVO, Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = shared.edit();
+        editor.putBoolean(SUGERIR_PREENCHIMENTO, novoValor);
+
+        editor.commit();
+
+        sugerirPreenchimento = novoValor;
+
+    }
+
+    private void lerUltimaCategoria(){
+
+        SharedPreferences shared = getSharedPreferences(ListagemActivity.ARQUIVO, Context.MODE_PRIVATE);
+
+        ultimaCategoria = shared.getInt(ULTIMA_CATEGORIA, ultimaCategoria);
+    }
+
+    private void salvarUltimaCategoria(int novoValor){
+
+        SharedPreferences shared = getSharedPreferences(ListagemActivity.ARQUIVO, Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = shared.edit();
+        editor.putInt(ULTIMA_CATEGORIA, novoValor);
+
+        editor.commit();
+
+        ultimaCategoria = novoValor;
+
     }
 }

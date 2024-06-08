@@ -55,6 +55,7 @@
     <string name="deletar">Delete</string>
     <string name="novo_produto">New Product</string>
     <string name="editar_produto">Edit Product</string>
+    <string name="sugerir_campos">Fill suggestions</string>
 
 
 </resources>

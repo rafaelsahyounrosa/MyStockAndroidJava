@@ -32,6 +32,7 @@ public class ListagemActivity extends AppCompatActivity {
     private ActionMode actionMode;
     private View viewSelecionada;
     private int posicaoSelecionada = -1;
+    public static final String ARQUIVO = "com.rafaelrosa.mystock.PREFERENCIAS";
 
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
