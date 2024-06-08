@@ -1,16 +1,12 @@
 package com.example.mystock;
 
 import static com.example.mystock.R.string.dados_limpos;
-import static com.example.mystock.R.string.media;
-import static com.example.mystock.R.string.nome;
-import static com.example.mystock.R.string.quantidade;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -34,7 +30,9 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
     public static final String QUANTIDADE = "QUANTIDADE";
     public static final String IMPORTANTE = "IMPORTANTE";
     public static final String CRITICIDADE = "CRITICIDADE";
+    public static final String CRITICIDADE_CODIGO = "CRITICIDADE_CODIGO";
     public static final String CATEGORIA = "CATEGORIA";
+    public static final String CATEGORIA_CODIGO = "CATEGORIA_CODIGO";
 
     public static final String MODO = "MODO";
     public static final int NOVO = 1;
@@ -187,6 +185,7 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
 
         //TODO Teste para recuperar o texto que está no radioGroup
         int categoria = radioGroupCategoria.getCheckedRadioButtonId();
+        int criticidadeCod = spinnerCriticidade.getSelectedItemPosition();
 
 
 //        validaDados(view, nome, quantidade, importante, criticidade, categoria);
@@ -203,6 +202,9 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
             intent.putExtra(IMPORTANTE, importante);
             intent.putExtra(CRITICIDADE, criticidade);
             intent.putExtra(CATEGORIA, categoriaString);
+            intent.putExtra(CATEGORIA_CODIGO, categoria);
+            intent.putExtra(CRITICIDADE_CODIGO, criticidadeCod);
+
 
             setResult(Activity.RESULT_OK, intent);
             finish();

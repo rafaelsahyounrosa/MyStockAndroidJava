@@ -9,9 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
@@ -31,7 +29,6 @@ public class ListagemActivity extends AppCompatActivity {
     private ListView listViewProdutos;
     private ArrayList<Produto> produtos;
     private ProdutoAdapter listaAdapter;
-
     private ActionMode actionMode;
     private View viewSelecionada;
     private int posicaoSelecionada = -1;
@@ -161,15 +158,47 @@ public class ListagemActivity extends AppCompatActivity {
                             String nome = bundle.getString(ProdutoCadastroActivity.NOME);
                             String quantidade = bundle.getString(ProdutoCadastroActivity.QUANTIDADE);
                             Boolean importante = bundle.getBoolean(ProdutoCadastroActivity.IMPORTANTE);
-                            String criticidade = bundle.getString(ProdutoCadastroActivity.CRITICIDADE);
+
+                            //Tratando a criticidade após a internacionalização
+                            //String criticidade = bundle.getString(ProdutoCadastroActivity.CRITICIDADE);
+                            int criticidadeCod = bundle.getInt(ProdutoCadastroActivity.CRITICIDADE_CODIGO);
+                            Criticidade criticidadeTemp;
+                            switch (criticidadeCod){
+                                case 0:
+                                    criticidadeTemp = Criticidade.Baixa;
+                                    break;
+                                case 1:
+                                    criticidadeTemp = Criticidade.Media;
+                                    break;
+                                case 2:
+                                    criticidadeTemp = Criticidade.Alta;
+                                    break;
+                                default:
+                                    criticidadeTemp = Criticidade.Nenhuma;
+                                    break;
+                            }
+                            //Tratando a categoria após a internacionalização
                             String categoria = bundle.getString(ProdutoCadastroActivity.CATEGORIA);
+                            int categoriaCod = bundle.getInt(ProdutoCadastroActivity.CATEGORIA_CODIGO);
+                            Categoria categoriaTemp;
+                            //TODO Pedir feedback se essa é a solução ideal
+                            if (categoriaCod == R.id.radioButtonHigiene){
+
+                                categoriaTemp = Categoria.Higiene;
+                            } else if (categoriaCod == R.id.radioButtonComida) {
+                                categoriaTemp = Categoria.Comida;
+                            } else {
+                                categoriaTemp = Categoria.Limpeza;
+                            }
 
                             Produto produto = produtos.get(posicaoSelecionada);
                             produto.setNome(nome);
                             produto.setQuantidade(Integer.parseInt(quantidade));
                             produto.setImportante(importante);
-                            produto.setCriticidade(Criticidade.valueOf(criticidade));
-                            produto.setCategoria(Categoria.valueOf(categoria));
+                            //produto.setCriticidade(Criticidade.valueOf(criticidade));
+                            produto.setCriticidade(criticidadeTemp);
+                            //produto.setCategoria(Categoria.valueOf(categoria));
+                            produto.setCategoria(categoriaTemp);
 
                             posicaoSelecionada = -1;
 
@@ -200,19 +229,58 @@ public class ListagemActivity extends AppCompatActivity {
                             Intent intent = result.getData();
                             Bundle bundle = intent.getExtras();
 
+
                             if (bundle != null){
 
                                 String nome = bundle.getString(ProdutoCadastroActivity.NOME);
                                 String quantidade = bundle.getString(ProdutoCadastroActivity.QUANTIDADE);
                                 Boolean importante = bundle.getBoolean(ProdutoCadastroActivity.IMPORTANTE);
+
+                                //Tratando a criticidade após a internacionalização
                                 String criticidade = bundle.getString(ProdutoCadastroActivity.CRITICIDADE);
+                                int criticidadeCod = bundle.getInt(ProdutoCadastroActivity.CRITICIDADE_CODIGO);
+                                Criticidade criticidadeTemp;
+                                switch (criticidadeCod){
+                                    case 0:
+                                        criticidadeTemp = Criticidade.Baixa;
+                                        break;
+                                    case 1:
+                                        criticidadeTemp = Criticidade.Media;
+                                        break;
+                                    case 2:
+                                        criticidadeTemp = Criticidade.Alta;
+                                        break;
+                                    default:
+                                        criticidadeTemp = Criticidade.Nenhuma;
+                                        break;
+                                }
+
+
+                                //Tratando a categoria após a internacionalização
                                 String categoria = bundle.getString(ProdutoCadastroActivity.CATEGORIA);
+                                int categoriaCod = bundle.getInt(ProdutoCadastroActivity.CATEGORIA_CODIGO);
+                                Categoria categoriaTemp;
+                                //TODO Pedir feedback se essa é a solução ideal
+                                if (categoriaCod == R.id.radioButtonHigiene){
+
+                                    categoriaTemp = Categoria.Higiene;
+                                } else if (categoriaCod == R.id.radioButtonComida) {
+                                    categoriaTemp = Categoria.Comida;
+                                } else {
+                                    categoriaTemp = Categoria.Limpeza;
+                                }
+//                                boolean testeID = categoriaCod == R.id.radioButtonHigiene;
+
 
                                 Produto produto = new Produto(nome,
                                        Integer.parseInt(quantidade),
                                        importante,
-                                       Criticidade.valueOf(criticidade),
-                                       Categoria.valueOf(categoria));
+                                       //TODO Após tradução parou de funcionar. Tentar pelo ordinal do radio group?
+                                       //Criticidade.valueOf(criticidade),
+                                       //Categoria.valueOf(categoria));
+                                        criticidadeTemp,
+                                        categoriaTemp);
+
 
                                 produtos.add(produto);
 
