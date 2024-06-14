@@ -1,5 +1,6 @@
 package com.example.mystock;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -19,6 +20,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
+
+import com.example.mystock.utils.UtilsGUI;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,8 +61,8 @@ public class ListagemActivity extends AppCompatActivity {
                 return true;
             }
             else if (idMenuItem == R.id.menuItemDeletar){
-                deletarProduto();
-                mode.finish();
+                deletarProduto(mode);
+
                 return true;
             }
             else {
@@ -132,12 +135,31 @@ public class ListagemActivity extends AppCompatActivity {
         popularLista();
     }
 
-    private void deletarProduto(){
-        produtos.remove(posicaoSelecionada);
-        listaAdapter.notifyDataSetChanged();
-    }
+    private void deletarProduto(final ActionMode mode){
 
-    private void editarProduto(){
+        Produto produto = produtos.get(posicaoSelecionada);
+        String mensagem = getString(R.string.realmente_deseja_apagar) + "\n" + "\"" + produto.getNome() + "\"";
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        produtos.remove(posicaoSelecionada);
+                        listaAdapter.notifyDataSetChanged();
+                        mode.finish();
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+
+        UtilsGUI.confirmaçao(this, mensagem, listener);
+
+
+    }
+   private void editarProduto(){
         Produto produto = produtos.get(posicaoSelecionada);
 
         ProdutoCadastroActivity.editarProduto(this, launcherEditarProduto, produto);
@@ -309,42 +331,6 @@ public class ListagemActivity extends AppCompatActivity {
         produtos = new ArrayList<>();
         listaAdapter = new ProdutoAdapter(this, produtos);
         listViewProdutos.setAdapter(listaAdapter);
-
-
-
-//        CODIGO MOCK
-//        String[] nomes = getResources().getStringArray(R.array.nomes);
-//        int[] quantidades = getResources().getIntArray(R.array.quantidades);
-//        int[] importantes = getResources().getIntArray(R.array.importantes);
-//        int[] criticidades = getResources().getIntArray(R.array.criticidades);
-//        int[] categorias = getResources().getIntArray(R.array.categorias);
-//
-//        produtos = new ArrayList<>();
-//
-//        Produto produto;
-//        Categoria[] categoriasList = Categoria.values();
-//        Criticidade[] criticidadesList = Criticidade.values();
-//
-//        for (int i = 0; i < nomes.length; i++){
-//            produto = new Produto();
-//            produto.setNome(nomes[i]);
-//            produto.setQuantidade(quantidades[i]);
-//            produto.setCategoria(categoriasList[categorias[i]]);
-//            if (importantes[i] == 0){
-//                produto.setImportante(false);
-//                produto.setCriticidade(criticidadesList[3]);
-//            } else {
-//                produto.setImportante(true);
-//                produto.setCriticidade(criticidadesList[criticidades[i]]);
-//            }
-//
-//            produtos.add(produto);
-//
-//        }
-//
-//        ProdutoAdapter produtoAdapter = new ProdutoAdapter(this, produtos);
-//        listViewProdutos.setAdapter(produtoAdapter);
-
     }
 
 

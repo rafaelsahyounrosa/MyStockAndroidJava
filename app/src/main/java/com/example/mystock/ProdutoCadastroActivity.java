@@ -24,6 +24,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mystock.utils.UtilsGUI;
+
 import java.util.ArrayList;
 
 public class ProdutoCadastroActivity extends AppCompatActivity {
@@ -237,30 +239,22 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
 //        int categoria = radioGroupCategoria.getCheckedRadioButtonId();
 
         if(nome == null || nome.trim().isEmpty()){
-            Toast.makeText(this,
-                    getString(R.string.preciso_preencher_o_campo_nome_para_cadastrar),
-                    Toast.LENGTH_LONG).show();
+            UtilsGUI.aviso(this, R.string.preciso_preencher_o_campo_nome_para_cadastrar);
             editTextNome.requestFocus();
             return 0;
         } else if (quantidade == null || quantidade.trim().isEmpty()) {
-            Toast.makeText(this,
-                    getString(R.string.preciso_preecher_o_campo_de_quantidade_para_cadastrar),
-                    Toast.LENGTH_LONG).show();
+            UtilsGUI.aviso(this, R.string.preciso_preecher_o_campo_de_quantidade_para_cadastrar);
             editTextQuantidade.requestFocus();
             return 0;
         } else if (/*categoria = null ||*/ categoria < 0) {
-            Toast.makeText(this,
-                    getString(R.string.preciso_escolher_a_categoria_para_cadastrar),
-                    Toast.LENGTH_LONG).show();
+            UtilsGUI.aviso(this, R.string.preciso_escolher_a_categoria_para_cadastrar);
             radioGroupCategoria.requestFocus();
             return 0;
 
         } else if (importante) {
             //Lógica pois o checkbox será opcional
             if (criticidade == null || criticidade.trim().isEmpty()){
-                Toast.makeText(this,
-                        R.string.checkbox_importante_marcado_erro,
-                        Toast.LENGTH_LONG).show();
+                UtilsGUI.aviso(this, R.string.checkbox_importante_marcado_erro);
                 return 0;
             }
         }

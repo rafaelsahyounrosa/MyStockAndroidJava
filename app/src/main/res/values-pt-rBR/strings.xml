@@ -55,4 +55,8 @@
     <string name="novo_produto">Novo Produto</string>
     <string name="editar_produto">Editar Produto</string>
     <string name="sugerir_campos">Sugerir preenchimento</string>
+    <string name="aviso">Aviso</string>
+    <string name="ok">OK</string>
+    <string name="confirmacao">Confirmação</string>
+    <string name="realmente_deseja_apagar">Deseja realmente deletar?</string>
 </resources>
