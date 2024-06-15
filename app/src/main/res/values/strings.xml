@@ -60,6 +60,9 @@
     <string name="ok">OK</string>
     <string name="confirmacao">Confirmation</string>
     <string name="realmente_deseja_apagar">Do you really want to delete?</string>
+    <string name="error_while_trying_to_save">Error while trying to save</string>
+    <string name="error_while_trying_to_save_the_edition">Error while trying to save the edition</string>
+    <string name="error_while_trying_to_delete">Error while trying to delete</string>
 
 
 </resources>

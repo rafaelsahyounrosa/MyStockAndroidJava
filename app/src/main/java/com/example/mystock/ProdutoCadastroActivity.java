@@ -24,19 +24,25 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mystock.model.Categoria;
+import com.example.mystock.model.Criticidade;
+import com.example.mystock.model.Produto;
+import com.example.mystock.persistence.ProdutoDatabase;
 import com.example.mystock.utils.UtilsGUI;
 
 import java.util.ArrayList;
 
 public class ProdutoCadastroActivity extends AppCompatActivity {
 
-    public static final String NOME = "NOME";
-    public static final String QUANTIDADE = "QUANTIDADE";
-    public static final String IMPORTANTE = "IMPORTANTE";
-    public static final String CRITICIDADE = "CRITICIDADE";
-    public static final String CRITICIDADE_CODIGO = "CRITICIDADE_CODIGO";
-    public static final String CATEGORIA = "CATEGORIA";
-    public static final String CATEGORIA_CODIGO = "CATEGORIA_CODIGO";
+//    public static final String NOME = "NOME";
+////    public static final String QUANTIDADE = "QUANTIDADE";
+////    public static final String IMPORTANTE = "IMPORTANTE";
+////    public static final String CRITICIDADE = "CRITICIDADE";
+////    public static final String CRITICIDADE_CODIGO = "CRITICIDADE_CODIGO";
+////    public static final String CATEGORIA = "CATEGORIA";
+////    public static final String CATEGORIA_CODIGO = "CATEGORIA_CODIGO";
+
+    public static final String ID = "ID";
     public static final String SUGERIR_PREENCHIMENTO = "SUGERIR_PREENCHIMENTO";
     public static final String ULTIMA_CATEGORIA = "ULTIMA_CATEGORIA";
     private boolean sugerirPreenchimento = false;
@@ -46,6 +52,7 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
     public static final int NOVO = 1;
     public static final int EDITAR = 2;
     private int modo;
+    private Produto produtoOriginal;
     private String nomeOriginal;
     private int quantidadeOriginal;
     private boolean importanteOriginal;
@@ -68,11 +75,12 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
         Intent intent = new Intent(activity, ProdutoCadastroActivity.class);
 
         intent.putExtra(MODO, EDITAR);
-        intent.putExtra(NOME, produto.getNome());
-        intent.putExtra(QUANTIDADE, produto.getQuantidade());
-        intent.putExtra(IMPORTANTE, produto.isImportante());
-        intent.putExtra(CRITICIDADE, produto.getCriticidade().name());
-        intent.putExtra(CATEGORIA, produto.getCategoria().name());
+        intent.putExtra(ID, produto.getId());
+//        intent.putExtra(NOME, produto.getNome());
+//        intent.putExtra(QUANTIDADE, produto.getQuantidade());
+//        intent.putExtra(IMPORTANTE, produto.isImportante());
+//        intent.putExtra(CRITICIDADE, produto.getCriticidade().name());
+//        intent.putExtra(CATEGORIA, produto.getCategoria().name());
 
         launcher.launch(intent);
     }
@@ -125,15 +133,18 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
             } else if (modo == EDITAR) {
                 setTitle(getString(R.string.editar_produto));
 
-                nomeOriginal = bundle.getString(NOME);
-                quantidadeOriginal = bundle.getInt(QUANTIDADE);
-                importanteOriginal = bundle.getBoolean(IMPORTANTE);
-                criticidadeOriginal = Criticidade.valueOf(bundle.getString(CRITICIDADE));
-                categoriaOriginal = Categoria.valueOf(bundle.getString(CATEGORIA));
+                long id = bundle.getLong(ID);
 
-                editTextNome.setText(nomeOriginal);
-                editTextQuantidade.setText(String.valueOf(quantidadeOriginal));
-                checkBoxImportante.setChecked(importanteOriginal);
+                ProdutoDatabase database = ProdutoDatabase.getDatabase(this);
+                produtoOriginal = database.getProdutoDao().queryForID(id);
+
+                editTextNome.setText(produtoOriginal.getNome());
+                editTextQuantidade.setText(String.valueOf(produtoOriginal.getQuantidade()));
+                checkBoxImportante.setChecked(produtoOriginal.isImportante());
+
+                criticidadeOriginal = produtoOriginal.getCriticidade();
+                categoriaOriginal = produtoOriginal.getCategoria();
+
                 //TODO Melhorar tratamento para setar criticidade quando não for importante (marcar qualquer uma?)
                 if (criticidadeOriginal == Criticidade.Nenhuma){
                     spinnerCriticidade.setSelection(0);
@@ -161,21 +172,10 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
             }
         }
 
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//
-//        });
+
 
 
     }
-
-//    public CompoundButton.OnCheckedChangeListener setSpinnerCriticidadeEnable(){
-//
-//        spinnerCriticidade.setEnabled(checkBoxImportante.isChecked());
-//        return null;
-//    }
 
 
     private void popularSpinner(){
@@ -198,9 +198,20 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
         String quantidade = editTextQuantidade.getText().toString();
         Boolean importante = checkBoxImportante.isChecked();
         String criticidade = spinnerCriticidade.getSelectedItem().toString();
-
-        //TODO Teste para recuperar o texto que está no radioGroup
         int categoria = radioGroupCategoria.getCheckedRadioButtonId();
+
+
+        String categoriaString = ((RadioButton) findViewById(categoria)).getText().toString();
+        Categoria categoriaEnum = Categoria.Comida;
+
+        if(categoria == R.id.radioButtonComida){
+            categoriaEnum = Categoria.Comida;
+        } else if (categoria == R.id.radioButtonLimpeza) {
+            categoriaEnum = Categoria.Limpeza;
+        } else if (categoria == R.id.radioButtonHigiene) {
+            categoriaEnum = Categoria.Higiene;
+        }
+
         int criticidadeCod = spinnerCriticidade.getSelectedItemPosition();
 
 
@@ -209,19 +220,70 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
 
         if (dadosCorretos == 1){
 
-            salvarUltimaCategoria(categoria);
+            if (modo == EDITAR &&
+                nome.equals(produtoOriginal.getNome()) &&
+                quantidade.equals(produtoOriginal.getQuantidade() + "") &&
+                importante == produtoOriginal.isImportante() &&
+                criticidade == produtoOriginal.getCriticidade().toString() &&
+                categoria == produtoOriginal.getCategoria().ordinal()){
+                cancelar();
+                return;
+            }
 
-            String categoriaString = ((RadioButton) findViewById(categoria)).getText().toString();
+            salvarUltimaCategoria(categoria);
 
             Intent intent = new Intent();
 
-            intent.putExtra(NOME, nome);
-            intent.putExtra(QUANTIDADE, quantidade);
-            intent.putExtra(IMPORTANTE, importante);
-            intent.putExtra(CRITICIDADE, criticidade);
-            intent.putExtra(CATEGORIA, categoriaString);
-            intent.putExtra(CATEGORIA_CODIGO, categoria);
-            intent.putExtra(CRITICIDADE_CODIGO, criticidadeCod);
+
+            ProdutoDatabase database = ProdutoDatabase.getDatabase(this);
+
+            if(modo == NOVO){
+
+                Produto produto = new Produto(nome,
+                        Integer.parseInt(quantidade),
+                        importante,
+                        Criticidade.values()[criticidadeCod],
+                        categoriaEnum);
+
+                long novoID = database.getProdutoDao().insert(produto);
+
+                //TODO remover
+                System.out.println(novoID);
+
+                if(novoID < 0){
+                    UtilsGUI.aviso(this, R.string.error_while_trying_to_save);
+                    return;
+                }
+
+                produto.setId(novoID);
+                intent.putExtra(ID, produto.getId());
+            }
+            else {
+
+                Produto produtoAlterado = new Produto(nome,
+                        Integer.parseInt(quantidade),
+                        importante,
+                        Criticidade.values()[criticidadeCod],
+                        categoriaEnum);
+
+                produtoAlterado.setId(produtoOriginal.getId());
+
+                if (importante){
+                    produtoAlterado.setCriticidade(Criticidade.values()[criticidadeCod]);
+                }
+                else {
+                    produtoAlterado.setCriticidade(Criticidade.Nenhuma);
+                }
+
+                int quantidadeRegistrosAfetados = database.getProdutoDao().update(produtoAlterado);
+
+                if (quantidadeRegistrosAfetados == 0){
+                    UtilsGUI.aviso(this, R.string.error_while_trying_to_save_the_edition);
+                    return;
+                }
+
+                intent.putExtra(ID, produtoAlterado.getId());
+            }
 
 
             setResult(Activity.RESULT_OK, intent);
@@ -231,12 +293,6 @@ public class ProdutoCadastroActivity extends AppCompatActivity {
     }
 
     public int validaDados(String nome, String quantidade, Boolean importante, String criticidade, int categoria){
-
-//        String nome = editTextNome.getText().toString();
-//        String quantidade = editTextQuantidade.getText().toString();
-//        Boolean importante = checkBoxImportante.isChecked();
-//        String criticidade = spinnerCriticidade.getSelectedItem().toString();
-//        int categoria = radioGroupCategoria.getCheckedRadioButtonId();
 
         if(nome == null || nome.trim().isEmpty()){
             UtilsGUI.aviso(this, R.string.preciso_preencher_o_campo_nome_para_cadastrar);

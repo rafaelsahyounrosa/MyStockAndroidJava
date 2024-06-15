@@ -1,7 +1,11 @@
-package com.example.mystock;
+package com.example.mystock.model;
+
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import java.util.Comparator;
 
+@Entity
 public class Produto /*implements Comparable*/{
 
     public static Comparator<Produto> comparatorApiUnder24 = new Comparator<Produto>() {
@@ -16,6 +20,8 @@ public class Produto /*implements Comparable*/{
         }
     };
 
+    @PrimaryKey(autoGenerate = true)
+    private long id;
     private String nome;
     private int quantidade;
     private boolean importante;
@@ -38,6 +44,14 @@ public class Produto /*implements Comparable*/{
         }
 
         this.categoria = categoria;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getNome() {

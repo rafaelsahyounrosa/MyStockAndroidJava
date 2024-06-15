@@ -59,4 +59,7 @@
     <string name="ok">OK</string>
     <string name="confirmacao">Confirmação</string>
     <string name="realmente_deseja_apagar">Deseja realmente deletar?</string>
+    <string name="error_while_trying_to_save">Erro ao tentar salvar</string>
+    <string name="error_while_trying_to_save_the_edition">Erro ao tentar salvar a edição</string>
+    <string name="error_while_trying_to_delete">Erro ao tentar apagar</string>
 </resources>

@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.example.mystock.model.Produto;
+
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;

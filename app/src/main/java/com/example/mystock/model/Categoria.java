@@ -1,4 +1,4 @@
-package com.example.mystock;
+package com.example.mystock.model;
 
 public enum Categoria {
     Comida,

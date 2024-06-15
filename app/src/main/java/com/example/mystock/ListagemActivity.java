@@ -21,16 +21,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 
+import com.example.mystock.model.Categoria;
+import com.example.mystock.model.Criticidade;
+import com.example.mystock.model.Produto;
+import com.example.mystock.persistence.ProdutoDatabase;
 import com.example.mystock.utils.UtilsGUI;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class ListagemActivity extends AppCompatActivity {
 
     private ListView listViewProdutos;
-    private ArrayList<Produto> produtos;
+    private List<Produto> produtos;
     private ProdutoAdapter listaAdapter;
     private ActionMode actionMode;
     private View viewSelecionada;
@@ -137,7 +142,7 @@ public class ListagemActivity extends AppCompatActivity {
 
     private void deletarProduto(final ActionMode mode){
 
-        Produto produto = produtos.get(posicaoSelecionada);
+        final Produto produto = produtos.get(posicaoSelecionada);
         String mensagem = getString(R.string.realmente_deseja_apagar) + "\n" + "\"" + produto.getNome() + "\"";
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
@@ -145,9 +150,18 @@ public class ListagemActivity extends AppCompatActivity {
 
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
-                        produtos.remove(posicaoSelecionada);
-                        listaAdapter.notifyDataSetChanged();
-                        mode.finish();
+
+                        ProdutoDatabase database = ProdutoDatabase.getDatabase(ListagemActivity.this);
+                        int quantidadeAfetada = database.getProdutoDao().delete(produto);
+
+                        if(quantidadeAfetada > 0 ){
+                            produtos.remove(posicaoSelecionada);
+                            listaAdapter.notifyDataSetChanged();
+                            mode.finish();
+                        }else{
+                            UtilsGUI.aviso(ListagemActivity.this, R.string.error_while_trying_to_delete);
+                        }
+
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         break;
@@ -178,50 +192,56 @@ public class ListagemActivity extends AppCompatActivity {
 
                         if (bundle != null){
 
-                            String nome = bundle.getString(ProdutoCadastroActivity.NOME);
-                            String quantidade = bundle.getString(ProdutoCadastroActivity.QUANTIDADE);
-                            Boolean importante = bundle.getBoolean(ProdutoCadastroActivity.IMPORTANTE);
+                            long id = bundle.getLong(ProdutoCadastroActivity.ID);
+                            ProdutoDatabase database = ProdutoDatabase.getDatabase(ListagemActivity.this);
+                            Produto produtoEditado = database.getProdutoDao().queryForID(id);
 
-                            //Tratando a criticidade após a internacionalização
-                            //String criticidade = bundle.getString(ProdutoCadastroActivity.CRITICIDADE);
-                            int criticidadeCod = bundle.getInt(ProdutoCadastroActivity.CRITICIDADE_CODIGO);
-                            Criticidade criticidadeTemp;
-                            switch (criticidadeCod){
-                                case 0:
-                                    criticidadeTemp = Criticidade.Baixa;
-                                    break;
-                                case 1:
-                                    criticidadeTemp = Criticidade.Media;
-                                    break;
-                                case 2:
-                                    criticidadeTemp = Criticidade.Alta;
-                                    break;
-                                default:
-                                    criticidadeTemp = Criticidade.Nenhuma;
-                                    break;
-                            }
-                            //Tratando a categoria após a internacionalização
-                            String categoria = bundle.getString(ProdutoCadastroActivity.CATEGORIA);
-                            int categoriaCod = bundle.getInt(ProdutoCadastroActivity.CATEGORIA_CODIGO);
-                            Categoria categoriaTemp;
-                            //TODO Pedir feedback se essa é a solução ideal
-                            if (categoriaCod == R.id.radioButtonHigiene){
+//                            String nome = bundle.getString(ProdutoCadastroActivity.NOME);
+//                            String quantidade = bundle.getString(ProdutoCadastroActivity.QUANTIDADE);
+//                            Boolean importante = bundle.getBoolean(ProdutoCadastroActivity.IMPORTANTE);
+//
+//                            //Tratando a criticidade após a internacionalização
+//                            //String criticidade = bundle.getString(ProdutoCadastroActivity.CRITICIDADE);
+//                            int criticidadeCod = bundle.getInt(ProdutoCadastroActivity.CRITICIDADE_CODIGO);
+//                            Criticidade criticidadeTemp;
+//                            switch (criticidadeCod){
+//                                case 0:
+//                                    criticidadeTemp = Criticidade.Baixa;
+//                                    break;
+//                                case 1:
+//                                    criticidadeTemp = Criticidade.Media;
+//                                    break;
+//                                case 2:
+//                                    criticidadeTemp = Criticidade.Alta;
+//                                    break;
+//                                default:
+//                                    criticidadeTemp = Criticidade.Nenhuma;
+//                                    break;
+//                            }
+//                            //Tratando a categoria após a internacionalização
+//                            String categoria = bundle.getString(ProdutoCadastroActivity.CATEGORIA);
+//                            int categoriaCod = bundle.getInt(ProdutoCadastroActivity.CATEGORIA_CODIGO);
+//                            Categoria categoriaTemp;
+//                            //TODO Pedir feedback se essa é a solução ideal
+//                            if (categoriaCod == R.id.radioButtonHigiene){
+//
+//                                categoriaTemp = Categoria.Higiene;
+//                            } else if (categoriaCod == R.id.radioButtonComida) {
+//                                categoriaTemp = Categoria.Comida;
+//                            } else {
+//                                categoriaTemp = Categoria.Limpeza;
+//                            }
+//
+//                            Produto produto = produtos.get(posicaoSelecionada);
+//                            produto.setNome(nome);
+//                            produto.setQuantidade(Integer.parseInt(quantidade));
+//                            produto.setImportante(importante);
+//                            //produto.setCriticidade(Criticidade.valueOf(criticidade));
+//                            produto.setCriticidade(criticidadeTemp);
+//                            //produto.setCategoria(Categoria.valueOf(categoria));
+//                            produto.setCategoria(categoriaTemp);
 
-                                categoriaTemp = Categoria.Higiene;
-                            } else if (categoriaCod == R.id.radioButtonComida) {
-                                categoriaTemp = Categoria.Comida;
-                            } else {
-                                categoriaTemp = Categoria.Limpeza;
-                            }
-
-                            Produto produto = produtos.get(posicaoSelecionada);
-                            produto.setNome(nome);
-                            produto.setQuantidade(Integer.parseInt(quantidade));
-                            produto.setImportante(importante);
-                            //produto.setCriticidade(Criticidade.valueOf(criticidade));
-                            produto.setCriticidade(criticidadeTemp);
-                            //produto.setCategoria(Categoria.valueOf(categoria));
-                            produto.setCategoria(categoriaTemp);
+                            produtos.set(posicaoSelecionada, produtoEditado);
 
                             posicaoSelecionada = -1;
 
@@ -255,57 +275,61 @@ public class ListagemActivity extends AppCompatActivity {
 
                             if (bundle != null){
 
-                                String nome = bundle.getString(ProdutoCadastroActivity.NOME);
-                                String quantidade = bundle.getString(ProdutoCadastroActivity.QUANTIDADE);
-                                Boolean importante = bundle.getBoolean(ProdutoCadastroActivity.IMPORTANTE);
+                                long id = bundle.getLong(ProdutoCadastroActivity.ID);
+                                ProdutoDatabase database = ProdutoDatabase.getDatabase(ListagemActivity.this);
+                                Produto produtoNovo = database.getProdutoDao().queryForID(id);
 
-                                //Tratando a criticidade após a internacionalização
-                                String criticidade = bundle.getString(ProdutoCadastroActivity.CRITICIDADE);
-                                int criticidadeCod = bundle.getInt(ProdutoCadastroActivity.CRITICIDADE_CODIGO);
-                                Criticidade criticidadeTemp;
-                                switch (criticidadeCod){
-                                    case 0:
-                                        criticidadeTemp = Criticidade.Baixa;
-                                        break;
-                                    case 1:
-                                        criticidadeTemp = Criticidade.Media;
-                                        break;
-                                    case 2:
-                                        criticidadeTemp = Criticidade.Alta;
-                                        break;
-                                    default:
-                                        criticidadeTemp = Criticidade.Nenhuma;
-                                        break;
-                                }
+//                                String nome = bundle.getString(ProdutoCadastroActivity.NOME);
+//                                String quantidade = bundle.getString(ProdutoCadastroActivity.QUANTIDADE);
+//                                Boolean importante = bundle.getBoolean(ProdutoCadastroActivity.IMPORTANTE);
+//
+//                                //Tratando a criticidade após a internacionalização
+//                                String criticidade = bundle.getString(ProdutoCadastroActivity.CRITICIDADE);
+//                                int criticidadeCod = bundle.getInt(ProdutoCadastroActivity.CRITICIDADE_CODIGO);
+//                                Criticidade criticidadeTemp;
+//                                switch (criticidadeCod){
+//                                    case 0:
+//                                        criticidadeTemp = Criticidade.Baixa;
+//                                        break;
+//                                    case 1:
+//                                        criticidadeTemp = Criticidade.Media;
+//                                        break;
+//                                    case 2:
+//                                        criticidadeTemp = Criticidade.Alta;
+//                                        break;
+//                                    default:
+//                                        criticidadeTemp = Criticidade.Nenhuma;
+//                                        break;
+//                                }
+//
+//
+//                                //Tratando a categoria após a internacionalização
+//                                String categoria = bundle.getString(ProdutoCadastroActivity.CATEGORIA);
+//                                int categoriaCod = bundle.getInt(ProdutoCadastroActivity.CATEGORIA_CODIGO);
+//                                Categoria categoriaTemp;
+//                                //TODO Pedir feedback se essa é a solução ideal
+//                                if (categoriaCod == R.id.radioButtonHigiene){
+//
+//                                    categoriaTemp = Categoria.Higiene;
+//                                } else if (categoriaCod == R.id.radioButtonComida) {
+//                                    categoriaTemp = Categoria.Comida;
+//                                } else {
+//                                    categoriaTemp = Categoria.Limpeza;
+//                                }
+////                                boolean testeID = categoriaCod == R.id.radioButtonHigiene;
+//
+//
+//                                Produto produto = new Produto(nome,
+//                                       Integer.parseInt(quantidade),
+//                                       importante,
+//                                       //TODO Após tradução parou de funcionar. Tentar pelo ordinal do radio group?
+//                                       //Criticidade.valueOf(criticidade),
+//                                       //Categoria.valueOf(categoria));
+//                                        criticidadeTemp,
+//                                        categoriaTemp);
 
 
-                                //Tratando a categoria após a internacionalização
-                                String categoria = bundle.getString(ProdutoCadastroActivity.CATEGORIA);
-                                int categoriaCod = bundle.getInt(ProdutoCadastroActivity.CATEGORIA_CODIGO);
-                                Categoria categoriaTemp;
-                                //TODO Pedir feedback se essa é a solução ideal
-                                if (categoriaCod == R.id.radioButtonHigiene){
-
-                                    categoriaTemp = Categoria.Higiene;
-                                } else if (categoriaCod == R.id.radioButtonComida) {
-                                    categoriaTemp = Categoria.Comida;
-                                } else {
-                                    categoriaTemp = Categoria.Limpeza;
-                                }
-//                                boolean testeID = categoriaCod == R.id.radioButtonHigiene;
-
-
-                                Produto produto = new Produto(nome,
-                                       Integer.parseInt(quantidade),
-                                       importante,
-                                       //TODO Após tradução parou de funcionar. Tentar pelo ordinal do radio group?
-                                       //Criticidade.valueOf(criticidade),
-                                       //Categoria.valueOf(categoria));
-                                        criticidadeTemp,
-                                        categoriaTemp);
-
-
-                                produtos.add(produto);
+                                produtos.add(produtoNovo);
 
 
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -328,7 +352,10 @@ public class ListagemActivity extends AppCompatActivity {
 
     private void popularLista(){
 
-        produtos = new ArrayList<>();
+        ProdutoDatabase database = ProdutoDatabase.getDatabase(this);
+
+        produtos = database.getProdutoDao().queryAllAsc();
+
         listaAdapter = new ProdutoAdapter(this, produtos);
         listViewProdutos.setAdapter(listaAdapter);
     }
